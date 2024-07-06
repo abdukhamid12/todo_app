@@ -1,10 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<div class="modal fade" id="exampleEditModal" tabindex="-1" aria-labelledby="exampleCreateModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5 text-warning" id="exampleModalLabel">Topshiriqni O`zgartirish</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <form method="post" class="p-3">
+                        <h3 class="text-center">O`zgartirish Formasi</h3>
+                        <input class="form-control mb-3" type="text" placeholder="Title" name="title">
+                        <textarea class="form-control mb-3" rows="8" placeholder="Context" name="context"></textarea>
+                        <button class="btn btn-outline-dark mt-2 text-warning" type="submit">O`zgartirish</button>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Yopish</button>
+                <button type="button" class="btn btn-warning">Ozgartirish</button>
+            </div>
+        </div>
+    </div>
+</div>

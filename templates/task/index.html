@@ -1,64 +1,67 @@
 {% extends '_base.html' %}
-{% load static %}
 
 {% block title %}
 Home
 {% endblock %}
 
 {% block content %}
-<div class="theme-toggle">
-    <label class="switch">
-        <input type="checkbox" id="themeSwitch">
-        <span class="slider round"></span>
-    </label>
-    <span>Dark Mode</span>
+
+{% include 'task/navbar.html' %}
+{% include 'task/modal_create.html' %}
+{% include 'task/modal_delete.html' %}
+{% include 'task/modal_edit.html' %}
+{% include 'task/modal_detail.html' %}
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="todo-container w-50">
-    <div class="todo-header">
-        <h2>To-Do List</h2>
-    </div>
-    <div class="d-flex">
-        <input type="text" id="todoInput" class="todo-input" placeholder="Enter new task...">
-        <button style="height: 45px; margin-left: 15px;" class="btn btn-outline-success" type="submit">Search</button>
-        <button style="height: 45px; margin-left: 15px;" class="btn btn-dark" type="submit" id="addButton">Add</button>
-    </div>
-    <ul id="todoList" class="todo-list"></ul>
-</div>
+<!-- TABLE -->
+<table class="table table-hover mt-5">
+    <thead>
+    <tr>
+        <th class="w-75" scope="col">Topshiriqlar <span class="text-danger">10</span> ta</th>
+        <th scope="col">O`zgartirish</th>
+        <th scope="col">O`chirish</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <th scope="row" data-bs-toggle="modal" data-bs-target="#exampleDetailModal">
+            <a href="#"><h5>Qani oming</h5></a>
+            <span class="text-secondary">June 27, 2024</span>
+            <span class="text-secondary float-end">4:38 p.m.</span>
+        </th>
+        <td class="text-center align-middle">
+            <button class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#exampleEditModal">
+                <i class="bi bi-pencil-square"></i>
+            </button>
+        </td>
+        <td class="text-center align-middle">
+            <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exampleDeleteModal">
+                <i class="bi bi-trash3-fill"></i>
+            </button>
+        </td>
+    </tr>
+    </tbody>
+</table>
 
-<script>
-    document.getElementById('addButton').addEventListener('click', function() {
-      const todoInput = document.getElementById('todoInput');
-      const todoList = document.getElementById('todoList');
+{% include 'task/pagenation.html' %}
 
-      if (todoInput.value.trim() !== '') {
-        const listItem = document.createElement('li');
-        listItem.className = 'todo-item';
-        listItem.innerHTML = `
-          <span>${todoInput.value}</span>
-          <div class="buttons">
-            <button class="edit">Edit</button>
-            <button class="delete">Delete</button>
-          </div>
-        `;
-        todoList.appendChild(listItem);
-        todoInput.value = '';
 
-        listItem.querySelector('.delete').addEventListener('click', function() {
-          listItem.remove();
-        });
-
-        listItem.querySelector('.edit').addEventListener('click', function() {
-          const newTask = prompt('Edit task:', listItem.querySelector('span').textContent);
-          if (newTask !== null && newTask.trim() !== '') {
-            listItem.querySelector('span').textContent = newTask;
-          }
-        });
-      }
-    });
-
-    document.getElementById('themeSwitch').addEventListener('change', function() {
-      document.body.classList.toggle('dark-mode');
-    });
-</script>
 {% endblock %}

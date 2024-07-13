@@ -8,17 +8,16 @@
             </div>
             <div class="modal-body">
                 <div class="card">
-                    <form method="post" class="p-3">
-                        <h3 class="text-center">O`zgartirish Formasi</h3>
-                        <input class="form-control mb-3" type="text" placeholder="Title" name="title">
-                        <textarea class="form-control mb-3" rows="8" placeholder="Context" name="context"></textarea>
-                        <button class="btn btn-outline-dark mt-2 text-warning" type="submit">O`zgartirish</button>
+                    <form action="{% url 'edit_task' %}" method="post" class="p-3">
+                        {% csrf_token %}
+<!--                        <input type="hidden" id="task_id" name="task_id">-->
+                        {{ form.as_p }}
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Yopish</button>
+                            <button type="submit" class="btn btn-warning">Ozgartirish</button>
+                        </div>
                     </form>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Yopish</button>
-                <button type="button" class="btn btn-warning">Ozgartirish</button>
             </div>
         </div>
     </div>

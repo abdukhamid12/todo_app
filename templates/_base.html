@@ -49,6 +49,41 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
         integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
         crossorigin="anonymous"></script>
-</div>
+
+<!--CUSTOM DETAIL JS -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    var detailModal = document.querySelector("#exampleDetailModal");
+    detailModal.addEventListener("show.bs.modal", function(event) {
+        var button = event.relatedTarget;
+        var title = button.getAttribute('data-task-title');
+        var description = button.getAttribute('data-task-description');
+        var done = button.getAttribute('data-task-done');
+        var deleted = button.getAttribute('data-task-delete');
+        var created_at = button.getAttribute('data-task-created');
+        var updated_at = button.getAttribute('data-task-updated');
+        console.log(title, description,)
+
+        var taskTitle = document.querySelector('#detailTitle');
+        var taskDescription = document.querySelector('#detailDescription');
+        var taskDone = document.querySelector('#detailDone');
+        var taskDelete = document.querySelector('#detailDelete');
+        var taskCreated = document.querySelector('#detailCreated');
+        var taskUpdated = document.querySelector('#detailUpdated');
+
+        taskTitle.textContent = title;
+        taskDescription.textContent = description
+        taskDone.textContent = done
+        taskDelete.textContent = deleted
+        taskCreated.textContent = created_at
+        taskUpdated.textContent = updated_at
+
+
+
+
+    });
+    });
+
+</script>
 </body>
 </html>

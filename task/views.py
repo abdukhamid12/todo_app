@@ -1,61 +1,87 @@
-from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.core.paginator import Paginator
 
-import task
+from task.forms import TaskForm
 from task.models import Task
 
 
 # Create your views here.
-def home(request):
-    return render(request, 'task/index.html')
-
-def modal_create(request):
-    return render(request, 'task/modal_create.html')
-
 def task_view(request, sms, code, css_class):
+    if code == 'TODO':
+        tasks = Task.todo.all()
+    elif code == 'DONE':
+        tasks = Task.done.all()
+    elif code == 'DELETE':
+        tasks = Task.delete.all()
+    elif code == 'DONE & DELETE':
+        tasks = Task.done_delete.all()
+    else:
+        tasks = Task.objects.none()
+
+    form = TaskForm()
+    paginator = Paginator(tasks, 7)
+    page_number = request.GET.get('page')
+    tasks = paginator.get_page(page_number)
+
     context = {
+        'tasks': tasks,
+        'form': form,
+        'sms': sms,
+        'task_code': code,
+        'class': css_class,
+        'todo_count': Task.todo.all().count(),
+        'done_count': Task.done.all().count(),
         'deleted_count': Task.delete.all().count(),
         'done_delete_count': Task.done_delete.all().count(),
     }
-
     return render(request, 'task/index.html', context)
+
 
 @login_required
 def home_view(request):
     return task_view(request, 'Bajarilmagan', 'TODO', 'warning')
 
+
 @login_required
 def task_done_view(request):
     return task_view(request, 'Bajarilgan', 'DONE', 'success')
 
+
 @login_required
 def task_delete_view(request):
-    return task_view(request, 'O`chirilgan', 'DELETE', 'danger')
+    return task_view(request, "O'chirilgan", 'DELETE', 'danger')
+
 
 @login_required
 def done_delete_task_view(request):
     return task_view(request, 'Bajarilgan va O`chirilgan', 'DONE & DELETE', 'dark')
+
+
+def none():
+    pass
+
 
 @login_required
 def search(request):
     q = request.POST.get('search', '') if request.method == 'POST' else request.GET.get('search', '')
 
     if not q.strip():
-        tasks = Task.objects.none()
+        tasks = Task.objects, none()
     else:
         tasks = Task.objects.filter(title__icontains=q)
 
-    task_count = tasks.count()
+    tasks_count = tasks.count()
     paginator = Paginator(tasks, 7)
     page_number = request.GET.get('page')
     tasks = paginator.get_page(page_number)
 
-    if task_count > 0:
-        messages.success(request, f"{q} {'haqida' if q else ''} {task_count} ta malumot topildi!")
+    if tasks_count > 0:
+        messages.success(request, f"{q} {'haqida' if q else ''} ta ma'lumot topildi!")
     else:
-        messages.success(request, f"{q} haqida malumot topilmadi!")
+        messages.error(request, f"{q} haqida ma'lumot topilmadi!")
 
     context = {
         'tasks': tasks,
@@ -65,14 +91,15 @@ def search(request):
         'todo_count': Task.todo.all().count(),
         'done_count': Task.done.all().count(),
         'deleted_count': Task.delete.all().count(),
-        'done_delete_count': Task.done_delete.all().count(),
+        'done_deleted_count': Task.done_delete.all().count(),
         'search': q
     }
 
     return render(request, 'task/index.html', context)
 
-def custom_redirect(request):
-    if task.is_done and task.is_delete:
+
+def custom_redirect(task):
+    if task.is_done and task.is_done:
         return redirect('done-delete-task-view')
     elif task.is_delete:
         return redirect('task-delete-view')
@@ -81,30 +108,32 @@ def custom_redirect(request):
     else:
         return redirect('home-view')
 
+
 @login_required
 def create_task(request):
     if request.method == 'POST':
         form = TaskForm(request.POST)
         if form.is_valid():
             task = form.save()
-            messages.success(request, f"{task.title} Topshiriq muvaffaqqiyatli yaratildi!")
+            messages.success(request, f"{task.title} Topshiriq muvaffaqiyatli yaratildi!")
+
             return custom_redirect(task)
 
-@login_required
 
+@login_required
 def edit_task(request):
     if request.method == 'POST':
         task_id = request.POST['task_id']
         task = Task.objects.get(pk=task_id)
         task.title = request.POST['title']
-        task.description = request.POST['description']
-        task.is_done = request.POST['done', 'off'] == 'on'
-        task.is_delete = request.POST['delete', 'off'] == 'on'
+        task.description = request.POST[['description']]
+        task.is_done = request.POST.get('done', 'off') == 'on'
+        task.is_delete = request.POST.get('delete', 'off') == 'on'
         task.save()
-        messages.success(request, f"{task.title} topshiriq o`zgartirildi")
-        #custom redirect
+        messages.success(request, f"{task.title} topshiriq o'zgartirildi!")
 
         return custom_redirect(task)
+
 
 @login_required
 def done_task(request):
@@ -113,18 +142,17 @@ def done_task(request):
         task = Task.objects.get(pk=task_id)
         task.done = True
         task.save()
-        messages.success(request, f"{task.title} Topshiriq muvaffaqqiyatli bajarildi")
-
+        messages.success(request, f"{task.title} Topshiriq muvaffaqqiyatli bajarildi!")
         return custom_redirect(task)
 
-@login_required
 
+@login_required
 def delete_task(request):
     if request.method == 'POST':
         task_id = request.POST['task_id']
         task = Task.objects.get(pk=task_id)
-        task.is_delete = True
+        task.delete = True
         task.save()
-        messages.success(request, f"{task.title} Topshiriq o`chirildi!")
+        messages.success(request, f"{task.title} Topshiriq muvaffaqqiyatli o'chirildi!")
 
         return custom_redirect(task)

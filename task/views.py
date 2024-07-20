@@ -34,8 +34,8 @@ def task_view(request, sms, code, css_class):
         'class': css_class,
         'todo_count': Task.todo.all().count(),
         'done_count': Task.done.all().count(),
-        'deleted_count': Task.delete.all().count(),
-        'done_delete_count': Task.done_delete.all().count(),
+        'delete_count': Task.delete.all().count(),
+        'done_deleted_count': Task.done_delete.all().count(),
     }
     return render(request, 'task/index.html', context)
 
@@ -90,7 +90,7 @@ def search(request):
         'sms': 'Qidirilgan',
         'todo_count': Task.todo.all().count(),
         'done_count': Task.done.all().count(),
-        'deleted_count': Task.delete.all().count(),
+        'delete_count': Task.delete.all().count(),
         'done_deleted_count': Task.done_delete.all().count(),
         'search': q
     }
@@ -100,13 +100,13 @@ def search(request):
 
 def custom_redirect(task):
     if task.is_done and task.is_done:
-        return redirect('done-delete-task-view')
+        return redirect('done_deleted_task_view')
     elif task.is_delete:
-        return redirect('task-delete-view')
+        return redirect('task_delete_view')
     elif task.is_done:
-        return redirect('task-done-view')
+        return redirect('task_done_view')
     else:
-        return redirect('home-view')
+        return redirect('home_view')
 
 
 @login_required
@@ -126,12 +126,12 @@ def edit_task(request):
         task_id = request.POST['task_id']
         task = Task.objects.get(pk=task_id)
         task.title = request.POST['title']
-        task.description = request.POST[['description']]
+        task.description = request.POST['description']
         task.is_done = request.POST.get('done', 'off') == 'on'
         task.is_delete = request.POST.get('delete', 'off') == 'on'
         task.save()
         messages.success(request, f"{task.title} topshiriq o'zgartirildi!")
-
+        # custom redirect
         return custom_redirect(task)
 
 
@@ -151,7 +151,7 @@ def delete_task(request):
     if request.method == 'POST':
         task_id = request.POST['task_id']
         task = Task.objects.get(pk=task_id)
-        task.delete = True
+        task.is_delete = True
         task.save()
         messages.success(request, f"{task.title} Topshiriq muvaffaqqiyatli o'chirildi!")
 
